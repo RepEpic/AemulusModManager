@@ -34,6 +34,9 @@ namespace AemulusModManager
         {
             int end = Search(tmx, new byte[] { 0x00 });
             byte[] name = tmx.Take(end).ToArray();
+            // by default, .NET Core doesn't have all code pages needed for Console apps.
+            // see the .NET Core Notes in https://msdn.microsoft.com/en-us/library/system.diagnostics.process(v=vs.110).aspx
+            System.Text.Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             return Encoding.GetEncoding(932).GetString(name);
         }
 
