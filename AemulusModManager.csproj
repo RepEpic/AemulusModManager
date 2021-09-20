@@ -183,19 +183,19 @@
     <Folder Include="Original\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="FontAwesome5" Version="2.0.8" />
-    <PackageReference Include="gong-wpf-dragdrop" Version="2.3.1" />
+    <PackageReference Include="FontAwesome5" Version="2.1.4" />
+    <PackageReference Include="gong-wpf-dragdrop" Version="2.4.1" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="NVorbis" Version="0.10.3" />
-    <PackageReference Include="Octokit" Version="0.49.0" />
+    <PackageReference Include="Octokit" Version="0.50.0" />
     <PackageReference Include="Onova" Version="2.6.2" />
-    <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
+    <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0" />
-    <PackageReference Include="System.Text.Json" Version="5.0.1" />
-    <PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.14"  />
+    <PackageReference Include="System.Text.Json" Version="5.0.2" />
+    <PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.16" />
     <PackageReference Include="Vlc.DotNet.Wpf" Version="3.1.0" />
     <PackageReference Include="WpfAnimatedGif" Version="2.0.0" />
     <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.3.246501">
