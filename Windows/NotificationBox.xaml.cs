@@ -1,8 +1,7 @@
-﻿using Microsoft.Win32;
-using System;
-using System.Media;
+﻿using System;
 using System.Windows;
 using System.Windows.Shell;
+using AemulusModManager.Utilities;
 
 namespace AemulusModManager
 {
@@ -19,14 +18,14 @@ namespace AemulusModManager
             if (OK)
             {
                 OkButton.Visibility = Visibility.Visible;
-                PlayNotificationSound();
+                Platform.PlayNotificationSound();
                 taskBarItem.ProgressState = TaskbarItemProgressState.Indeterminate;
             }
             else
             {
                 YesButton.Visibility = Visibility.Visible;
                 NoButton.Visibility = Visibility.Visible;
-                PlayNotificationSound();
+                Platform.PlayNotificationSound();
             }
             if (message.Length > 40)
                 Notification.TextAlignment = TextAlignment.Left;
@@ -43,30 +42,6 @@ namespace AemulusModManager
             Close();
         }
 
-        public void PlayNotificationSound()
-        {
-            bool found = false;
-            try
-            {
-                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"AppEvents\Schemes\Apps\.Default\Notification.Default\.Current"))
-                {
-                    if (key != null)
-                    {
-                        Object o = key.GetValue(null); // pass null to get (Default)
-                        if (o != null)
-                        {
-                            SoundPlayer theSound = new SoundPlayer((String)o);
-                            theSound.Play();
-                            found = true;
-                        }
-                    }
-                }
-            }
-            catch
-            { }
-            if (!found)
-                SystemSounds.Beep.Play(); // consolation prize
-        }
     }
 
 }

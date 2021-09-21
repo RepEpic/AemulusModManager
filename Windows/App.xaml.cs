@@ -1,9 +1,7 @@
 ﻿using AemulusModManager.Utilities;
-using Microsoft.Win32;
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
@@ -53,31 +51,13 @@ namespace AemulusModManager
             catch { }
             return otherProcess;
         }
-        public static bool InstallGBHandler()
-        {
-            string AppPath = Path.ChangeExtension(Assembly.GetExecutingAssembly().Location, ".exe");
-            string protocolName = $"Aemulus";
-            try
-            {
-                var reg = Registry.CurrentUser.CreateSubKey(@"Software\Classes\aemulus");
-                reg.SetValue("", $"URL:{protocolName}");
-                reg.SetValue("URL Protocol", "");
-                reg = reg.CreateSubKey(@"shell\open\command");
-                reg.SetValue("", $"\"{AppPath}\" \"%1\"");
-                reg.Close();
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
+        
         protected override void OnStartup(StartupEventArgs e)
         {
             ShutdownMode = ShutdownMode.OnMainWindowClose;
 
             DispatcherUnhandledException += App_DispatcherUnhandledException;
-            InstallGBHandler();
+            Platform.InstallGBHandler();
             var otherProcess = AlreadyRunning();
             var running = otherProcess != null;
             var oneClick = e.Args.Length > 0;

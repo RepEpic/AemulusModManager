@@ -918,7 +918,7 @@ namespace AemulusModManager
                 EnableUI();
             }
             else if (game == "Persona 5 Strikers")
-                Process.Start("steam://rungameid/1382330/option0");
+                Platform.OpenUrl("steam://rungameid/1382330/option0");
             else
                 Console.WriteLine("[ERROR] Please setup shortcut in config menu.");
         }
@@ -1953,12 +1953,12 @@ namespace AemulusModManager
 
         private void Inaba_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start("https://gamebanana.com/tools/6872");
+            Platform.OpenUrl("https://gamebanana.com/tools/6872");
         }
 
         private void HHH_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start("https://gamebanana.com/gamefiles/12806");
+            Platform.OpenUrl("https://gamebanana.com/gamefiles/12806");
         }
 
         private void OpenItem_Click(object sender, RoutedEventArgs e)
@@ -2383,7 +2383,7 @@ namespace AemulusModManager
 
         private void Kofi_Click(object sender, MouseButtonEventArgs e)
         {
-            Process.Start("https://www.ko-fi.com/tekka");
+            Platform.OpenUrl("https://www.ko-fi.com/tekka");
         }
 
         private void Setup_Click(object sender, MouseButtonEventArgs e)

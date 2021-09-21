@@ -1,10 +1,9 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.IO;
-using System.Media;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml.Serialization;
+using AemulusModManager.Utilities;
 
 namespace AemulusModManager.Windows
 {
@@ -37,7 +36,7 @@ namespace AemulusModManager.Windows
                 NoButton.Visibility = Visibility.Visible;
                 SkipButton.Visibility = Visibility.Visible;
             }
-            PlayNotificationSound();
+            Platform.PlayNotificationSound();
         }
 
         // An instance where you can't skip the update (only yes or no)
@@ -59,7 +58,7 @@ namespace AemulusModManager.Windows
                 Grid.SetColumnSpan(YesButton, 2);
                 Grid.SetColumnSpan(NoButton, 2);
             }
-            PlayNotificationSound();
+            Platform.PlayNotificationSound();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -104,30 +103,6 @@ namespace AemulusModManager.Windows
             Close();
         }
 
-        public void PlayNotificationSound()
-        {
-            bool found = false;
-            try
-            {
-                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"AppEvents\Schemes\Apps\.Default\Notification.Default\.Current"))
-                {
-                    if (key != null)
-                    {
-                        Object o = key.GetValue(null); // pass null to get (Default)
-                        if (o != null)
-                        {
-                            SoundPlayer theSound = new SoundPlayer((String)o);
-                            theSound.Play();
-                            found = true;
-                        }
-                    }
-                }
-            }
-            catch
-            { }
-            if (!found)
-                SystemSounds.Beep.Play(); // consolation prize
-        }
     }
 
 }
