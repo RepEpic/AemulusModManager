@@ -44,14 +44,12 @@ namespace AemulusModManager
         public override void Write(string value)
         {
             WriteEvent?.Invoke(this, new ConsoleWriterEventArgs(value));
-            base.Write(value);
             sw.Write(value);
         }
 
         public override void WriteLine(string value)
         {
             WriteLineEvent?.Invoke(this, new ConsoleWriterEventArgs(value));
-            base.WriteLine(value);
             if (sw != null)
             {
                 sw.WriteLine($"{DateTime.Now} {value}");
