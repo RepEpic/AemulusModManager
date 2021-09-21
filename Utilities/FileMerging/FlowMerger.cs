@@ -21,7 +21,6 @@ namespace AemulusModManager.Utilities.FileMerging
 
                 foreach (string file in flowFiles)
                 {
-
                     string bf = Path.ChangeExtension(file, "bf");
                     string filePath = Utils.GetRelativePath(bf, dir, game);
                     // If the current file is a bf check if it has a corresponding flow
@@ -52,6 +51,10 @@ namespace AemulusModManager.Utilities.FileMerging
                     {
                         // Get the path of the file in original
                         string ogPath = $@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Original\{game}\{Utils.GetRelativePath(bf, dir, game, false)}";
+                        if (game == "Persona 3 Portable")
+                        {
+                            ogPath = $@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Original\{game}\extracted\{Utils.GetRelativePath(bf, dir, game, false)}";
+                        }
                         // Copy the original file to be used as a base
                         if (FileIOWrapper.Exists(ogPath))
                         {

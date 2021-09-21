@@ -37,6 +37,7 @@ namespace AemulusModManager
     public partial class MainWindow : Window
     {
         public AemulusConfig config;
+        public ConfigP3P p3pConfig;
         public ConfigP3F p3fConfig;
         public ConfigP4G p4gConfig;
         public ConfigP5 p5Config;
@@ -231,8 +232,10 @@ namespace AemulusModManager
                 p5sConfig = new ConfigP5S();
                 p4gConfig = new ConfigP4G();
                 p3fConfig = new ConfigP3F();
+                p3pConfig = new ConfigP3P();
                 config.p4gConfig = p4gConfig;
                 config.p3fConfig = p3fConfig;
+                config.p3pConfig = p3pConfig;
                 config.p5Config = p5Config;
                 config.p5sConfig = p5sConfig;
 
@@ -280,7 +283,7 @@ namespace AemulusModManager
                             else
                                 config = (AemulusConfig)xs.Deserialize(streamWriter);
                             game = config.game;
-                            if (game != "Persona 4 Golden" && game != "Persona 3 FES" && game != "Persona 5" && game != "Persona 5 Strikers")
+                            if (game != "Persona 4 Golden" && game != "Persona 3 FES" && game != "Persona 3 Portable" && game != "Persona 5" && game != "Persona 5 Strikers")
                             {
                                 game = "Persona 4 Golden";
                                 config.game = "Persona 4 Golden";
@@ -291,6 +294,8 @@ namespace AemulusModManager
 
                             if (config.p3fConfig != null)
                                 p3fConfig = config.p3fConfig;
+                            if (config.p3pConfig != null)
+                                p3pConfig = config.p3pConfig;
                             if (config.p4gConfig != null)
                                 p4gConfig = config.p4gConfig;
                             if (config.p5Config != null)
@@ -338,6 +343,23 @@ namespace AemulusModManager
                                 foreach (var button in buttons)
                                     button.Foreground = new SolidColorBrush(Color.FromRgb(0x4f, 0xa4, 0xff));
                             }
+                            else if (game == "Persona 3 Portable")
+                            {
+                                modPath = config.p3pConfig.modDir;
+                                selectedLoadout = config.p3pConfig.loadout;
+                                gamePath = config.p3pConfig.p3pDir;
+                                launcherPath = config.p3pConfig.launcherPath;
+                                buildWarning = config.p3pConfig.buildWarning;
+                                buildFinished = config.p3pConfig.buildFinished;
+                                updateChangelog = config.p3pConfig.updateChangelog;
+                                updateAll = config.p3pConfig.updateAll;
+                                updatesEnabled = config.p3pConfig.updatesEnabled;
+                                deleteOldVersions = config.p3pConfig.deleteOldVersions;
+                                useCpk = false;
+                                ConvertCPK.Visibility = Visibility.Collapsed;
+                                foreach (var button in buttons)
+                                    button.Foreground = new SolidColorBrush(Color.FromRgb(255, 79, 193));
+                            }
                             else if (game == "Persona 5")
                             {
                                 modPath = config.p5Config.modDir;
@@ -384,6 +406,8 @@ namespace AemulusModManager
                         config.p4gConfig = p4gConfig;
                     if (config.p3fConfig == null)
                         config.p3fConfig = p3fConfig;
+                    if (config.p3pConfig == null)
+                        config.p3pConfig = p3pConfig;
                     if (config.p5Config == null)
                         config.p5Config = p5Config;
                     if (config.p5sConfig == null)
@@ -398,16 +422,25 @@ namespace AemulusModManager
                         case "Persona 3 FES":
                             GameBox.SelectedIndex = 0;
                             break;
-                        case "Persona 4 Golden":
+                        case "Persona 3 Portable":
                             GameBox.SelectedIndex = 1;
                             break;
-                        case "Persona 5":
+                        case "Persona 4 Golden":
                             GameBox.SelectedIndex = 2;
                             break;
-                        case "Persona 5 Strikers":
+                        case "Persona 5":
                             GameBox.SelectedIndex = 3;
                             break;
+                        case "Persona 5 Strikers":
+                            GameBox.SelectedIndex = 4;
+                            break;
                     }
+
+                    showHidden = new Prop<bool>();
+                    showHidden.Value = packages.showHiddenPackages;
+
+                    VisibilityButton.DataContext = showHidden;
+                    ShowHiddenText.DataContext = showHidden;
 
                     // Initialise loadouts
                     loadoutUtils = new Loadouts(game);
@@ -430,6 +463,9 @@ namespace AemulusModManager
                     selectedLoadout = LoadoutBox.SelectedItem.ToString();
                     switch (game)
                     {
+                        case "Persona 3 Portable":
+                            config.p3pConfig.loadout = selectedLoadout;
+                            break;
                         case "Persona 3 FES":
                             config.p3fConfig.loadout = selectedLoadout;
                             break;
@@ -545,6 +581,8 @@ namespace AemulusModManager
                     modPath = config.p4gConfig.modDir;
                 else if (game == "Persona 3 FES" && config.p3fConfig.modDir != "" && config.p3fConfig.modDir != null)
                     modPath = config.p3fConfig.modDir;
+                else if (game == "Persona 3 Portable" && config.p3pConfig.modDir != "" && config.p3pConfig.modDir != null)
+                    modPath = config.p3pConfig.modDir;
                 else if (game == "Persona 5" && config.p5Config.modDir != "" && config.p5Config.modDir != null)
                     modPath = config.p5Config.modDir;
                 else if (game == "Persona 5 Strikers" && config.p5sConfig.modDir != "" && config.p5sConfig.modDir != null)
@@ -553,6 +591,7 @@ namespace AemulusModManager
                 // Create Packages directory if it doesn't exist
                 Directory.CreateDirectory($@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages");
                 Directory.CreateDirectory($@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\Persona 3 FES");
+                Directory.CreateDirectory($@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\Persona 3 Portable");
                 Directory.CreateDirectory($@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\Persona 4 Golden");
                 Directory.CreateDirectory($@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\Persona 5");
                 Directory.CreateDirectory($@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\Persona 5 Strikers");
@@ -598,6 +637,7 @@ namespace AemulusModManager
                     RightGrid.RowDefinitions[0].Height = new GridLength((double)config.RightTopGridHeight, GridUnitType.Star);
                 if (config.RightBottomGridHeight != null)
                     RightGrid.RowDefinitions[2].Height = new GridLength((double)config.RightBottomGridHeight, GridUnitType.Star);
+
 
                 LaunchPopup.Text = $"Launch {game}\n(Ctrl+L)";
                 FileSystemWatcher fileSystemWatcher = new FileSystemWatcher($@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}");
@@ -769,6 +809,8 @@ namespace AemulusModManager
                     PacUnpacker.Unpack(directory, cpkLang);
                 else if (game == "Persona 3 FES")
                     PacUnpacker.Unzip(directory);
+                else if (game == "Persona 3 Portable")
+                    PacUnpacker.UnUMD(directory);
                 else if (game == "Persona 5")
                     PacUnpacker.UnpackCPK(directory);
                 else if (game == "Persona 5 Strikers")
@@ -787,6 +829,7 @@ namespace AemulusModManager
                 if ((game == "Persona 4 Golden" && !Directory.Exists($@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Original\{game}\{Path.GetFileNameWithoutExtension(cpkLang)}"))
                     || (game == "Persona 3 FES" && !Directory.Exists($@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Original\{game}\DATA")
                     && !Directory.Exists($@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Original\{game}\BTL"))
+                    || (game == "Persona 3 Portable" && !Directory.Exists($@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Original\{game}\data"))
                     || (game == "Persona 5" && !Directory.Exists($@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Original\{game}"))
                     || (game == "Persona 5 Strikers" && !Directory.Exists($@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Original\{game}\motor_rsc")))
                     Console.WriteLine($@"[ERROR] Failed to unpack everything from {game}! Please check if you have all prerequisites installed!");
@@ -799,6 +842,7 @@ namespace AemulusModManager
         private void LaunchCommand()
         {
             if ((gamePath != "" && gamePath != null && launcherPath != "" && launcherPath != null)
+                || gamePath != null || gamePath != ""
                 || (elfPath != "" && elfPath != null && launcherPath != "" && launcherPath != null))
             {
                 if (game != "Persona 3 FES")
@@ -890,6 +934,15 @@ namespace AemulusModManager
                         startInfo.Arguments += $" \"{tempGamePath}\"";
                     }
                 }
+                else if (game == "Persona 3 Portable")
+                {
+                    if (!Directory.Exists(gamePath))
+                    {
+                        Console.WriteLine($"[ERROR] Couldn't find {gamePath}. Please correct the file path in config.");
+                        return;
+                    }
+                    startInfo.Arguments = $"\"{gamePath}\"";
+                }
                 else if (game == "Persona 5")
                 {
                     if (!FileIOWrapper.Exists(gamePath))
@@ -939,6 +992,12 @@ namespace AemulusModManager
             else if (game == "Persona 3 FES")
             {
                 ConfigWindowP3F cWindow = new ConfigWindowP3F(this) { Owner = this };
+                cWindow.DataContext = this;
+                cWindow.ShowDialog();
+            }
+            else if (game == "Persona 3 Portable")
+            {
+                ConfigWindowP3P cWindow = new ConfigWindowP3P(this) { Owner = this };
                 cWindow.DataContext = this;
                 cWindow.ShowDialog();
             }
@@ -1015,6 +1074,25 @@ namespace AemulusModManager
                 }
             }
             Directory.Delete(source, true);
+        }
+
+        public static void CopyDirectory(string source, string target)
+        {
+            var sourcePath = source.TrimEnd('\\', ' ');
+            var targetPath = target.TrimEnd('\\', ' ');
+            var files = Directory.GetFiles(sourcePath, "*", SearchOption.AllDirectories)
+                                 .GroupBy(s => Path.GetDirectoryName(s));
+            foreach (var folder in files)
+            {
+                var targetFolder = folder.Key.Replace(sourcePath, targetPath);
+                Directory.CreateDirectory(targetFolder);
+                foreach (var file in folder)
+                {
+                    var targetFile = Path.Combine(targetFolder, Path.GetFileName(file));
+                    if (FileIOWrapper.Exists(targetFile)) FileIOWrapper.Delete(targetFile);
+                    FileIOWrapper.Copy(file, targetFile);
+                }
+            }
         }
 
         // Refresh both PackageList and DisplayedPackages
@@ -1372,6 +1450,8 @@ namespace AemulusModManager
                     button.IsHitTestVisible = true;
                     if (game == "Persona 3 FES")
                         button.Foreground = new SolidColorBrush(Color.FromRgb(0x4f, 0xa4, 0xff));
+                    else if (game == "Persona 3 Portable")
+                        button.Foreground = new SolidColorBrush(Color.FromRgb(255, 79, 193));
                     else if (game == "Persona 4 Golden")
                         button.Foreground = new SolidColorBrush(Color.FromRgb(0xfe, 0xed, 0x2b));
                     else if (game == "Persona 5 Strikers")
@@ -1454,9 +1534,10 @@ namespace AemulusModManager
             }
         }
 
-        private string selectExe(string title, string extension)
+        private string selectExe(string title, string extension, string type = "")
         {
-            string type = "Application";
+            if (type == "")
+                type = "Application";
             if (extension == ".iso")
                 type = "PS2 Disc";
             else if (extension == ".bin")
@@ -1476,16 +1557,24 @@ namespace AemulusModManager
         {
             MergeCommand();
         }
+        //private async void MergeCommand()
         private async void MergeCommand()
         {
             if ((game == "Persona 4 Golden" && !Directory.Exists($@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Original\{game}\{Path.GetFileNameWithoutExtension(cpkLang)}"))
                     || (game == "Persona 3 FES" && !Directory.Exists($@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Original\{game}\DATA")
                     && !Directory.Exists($@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Original\{game}\BTL"))
-                    || (game == "Persona 5" && !Directory.Exists($@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Original\{game}")))
+                    || (game == "Persona 5" && !Directory.Exists($@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Original\{game}")) 
+                    || (game == "Persona 3 Portable" && !Directory.Exists($@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Original\{game}")))
             {
                 Console.WriteLine("[WARNING] Aemulus can't find your Base files in the Original folder.");
                 Console.WriteLine($"[WARNING] Attempting to unpack/backup base files first.");
-
+                string selPath = "";
+                if (game == "Persona 3 Portable")
+                {
+                    selPath = selectExe("Select P3P's UMD0.cpk to unpack", ".cpk", "UMD0.cpk");
+                    if (selPath == null)
+                        Console.WriteLine("[ERROR] Incorrect file chosen.");
+                }
                 if (gamePath == "" || gamePath == null)
                 {
                     string selectedPath;
@@ -1536,14 +1625,23 @@ namespace AemulusModManager
 
                 if (game == "Persona 3 FES")
                     await pacUnpack(gamePath);
+                else if (game == "Persona 3 Portable")
+                {
+                    if (selPath != "")
+                        await pacUnpack(selPath);
+                    else
+                        return;
+                }
                 else if (game != "Persona 5 Strikers")
                     await pacUnpack(Path.GetDirectoryName(gamePath));
+
                 fromMain = false;
 
                 if ((game == "Persona 4 Golden" && !Directory.Exists($@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Original\{game}\{Path.GetFileNameWithoutExtension(cpkLang)}"))
                     || (game == "Persona 3 FES" && !Directory.Exists($@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Original\{game}\DATA")
                     && !Directory.Exists($@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Original\{game}\BTL"))
-                    || (game == "Persona 5" && !Directory.Exists($@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Original\{game}")))
+                    || (game == "Persona 5" && !Directory.Exists($@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Original\{game}"))
+                    || (game == "Persona 3 Portable" && !Directory.Exists($@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Original\{game}")))
                 {
                     Console.WriteLine($@"[ERROR] Failed to unpack everything from {game}! Please check if you have all prerequisites installed!");
                     return;
@@ -1630,8 +1728,16 @@ namespace AemulusModManager
                     packages.Reverse();
                 if (packages.Count == 0)
                 {
-                    Console.WriteLine("[WARNING] No packages enabled in loadout, emptying output folder...");
+                    
                     string path = modPath;
+
+                    if (game == "Persona 3 Portable")
+                    {
+                        path = $@"{modPath}\umd0";
+                        Console.WriteLine($"[WARNING] No packages enabled in loadout, Rebuilding Vanilla CPK...");
+                    }
+                    else
+                        Console.WriteLine("[WARNING] No packages enabled in loadout, emptying output folder...");
 
                     if (game == "Persona 5")
                     {
@@ -1639,7 +1745,8 @@ namespace AemulusModManager
                         Directory.CreateDirectory(path);
                     }
 
-                    if (!Directory.EnumerateFileSystemEntries(path).Any() && game != "Persona 5 Strikers")
+                    
+                    if (!Directory.EnumerateFileSystemEntries(path).Any() && game != "Persona 5 Strikers" && game != "Persona 3 Portable")
                     {
                         Console.WriteLine($"[INFO] Output folder already empty");
                         return;
@@ -1655,6 +1762,8 @@ namespace AemulusModManager
                             NotificationBox notification = new NotificationBox($"Confirm DELETING THE ENTIRE CONTENTS of {path}?", false);
                             if (game == "Persona 5 Strikers")
                                 notification = new NotificationBox($"Confirm DELETING THE MODIFIED CONTENTS of {path}?", false);
+                            else if (game == "Persona 3 Portable")
+                                notification = new NotificationBox($"Confirm Rebuilding {path}.cpk?", false);
                             notification.ShowDialog();
                             YesNo = notification.YesNo;
                             Mouse.OverrideCursor = Cursors.Wait;
@@ -1665,18 +1774,34 @@ namespace AemulusModManager
                             return;
                         }
                     }
-
                     if (game != "Persona 5 Strikers")
                         binMerge.Restart(path, emptySND, game, cpkLang);
                     else
                         Merger.Restart(path);
-                    Console.WriteLine("[INFO] Finished emptying output folder!");
+                    if (game == "Persona 3 Portable")
+                    {
+                        File.Delete(path + ".cpk");
+                        Console.WriteLine("[INFO] Copying Original Game's Files");
+                        CopyDirectory($@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Original\Persona 3 Portable\data", path + @"\data");
+                        Console.WriteLine("[INFO] Finished Copying Original Game's Files");
+                        binMerge.MakeCpk(path, false);
+                        if (!p3pConfig.leaveUmd)
+                        {
+                            binMerge.DeleteDirectory(path);
+                        }
+                        Console.WriteLine("[INFO] Finished Rebuilding Vanilla CPK!");
+                    }
+                    else
+                        Console.WriteLine("[INFO] Finished emptying output folder!");
+
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         Mouse.OverrideCursor = null;
                         if (buildWarning)
                         {
                             NotificationBox notification = new NotificationBox("Finished emptying output folder!");
+                            if (game == "Persona 3 Portable")
+                                notification = new NotificationBox("Finished Rebuilding Vanilla CPK!");
                             notification.ShowDialog();
                             Activate();
                         }
@@ -1689,6 +1814,12 @@ namespace AemulusModManager
                     if (game == "Persona 5")
                     {
                         path = $@"{modPath}\{config.p5Config.CpkName}";
+                        Directory.CreateDirectory(path);
+                    }
+
+                    if (game == "Persona 3 Portable")
+                    {
+                        path = $@"{modPath}\umd0";
                         Directory.CreateDirectory(path);
                     }
 
@@ -1712,7 +1843,7 @@ namespace AemulusModManager
                         }
                     }
 
-                    if (game != "Persona 5 Strikers")
+                    if (game != "Persona 5 Strikers" && game != "Persona 3 Portable")
                     {
                         // Merge flow, bmd and pm1 files
                         FlowMerger.Merge(packages, game);
@@ -1752,12 +1883,42 @@ namespace AemulusModManager
                         if (game == "Persona 4 Golden" && FileIOWrapper.Exists($@"{modPath}\patches\BGME_Base.patch") && FileIOWrapper.Exists($@"{modPath}\patches\BGME_Main.patch"))
                             Console.WriteLine("[WARNING] BGME_Base.patch and BGME_Main.patch found in your patches folder which will result in no music in battles.");
                     }
+                    else if (game == "Persona 3 Portable")
+                    {
+                        Console.WriteLine($"[INFO] Deleted umd0 folder");
+                        binMerge.Restart(path, emptySND, game, cpkLang);
+                        File.Delete(path + ".cpk");
+                        Directory.CreateDirectory(path + @"\data");
+                        Console.WriteLine("[INFO] Copying Original Game's Files...");
+                        CopyDirectory($@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Original\Persona 3 Portable\data", path + @"\data");
+                        Console.WriteLine("[INFO] Finished Copying Original Game's Files");
+                        FlowMerger.Merge(packages, game);
+                        BmdMerger.Merge(packages, game);
+                        await Task.Run(() =>
+                        {
+                            binMerge.Unpack(packages, path + @"\extract", useCpk, cpkLang, game);
+                            binMerge.Merge(path + @"\extract", game);
+                        });
+                        MoveDirectory(path + @"\extract", path);
+                        if (packages.Exists(x => Directory.Exists($@"{x}\tblpatches")))
+                        {
+                            tblPatch.Patch(packages, path, useCpk, cpkLang, game);
+                        }
+                        binMerge.MakeCpk(path, false);
+                        if (!p3pConfig.leaveUmd)
+                        {
+                            binMerge.DeleteDirectory(path);
+                            Console.WriteLine($"[INFO] Deleted umd0 folder");
+                        }
+                        
+                    }
                     else
                     {
                         Merger.Restart(path);
                         Merger.Merge(packages, path);
                         Merger.Patch(path);
                     }
+                    
 
                     Console.WriteLine("[INFO] Finished Building!");
                     Application.Current.Dispatcher.Invoke(() =>
@@ -2195,6 +2356,26 @@ namespace AemulusModManager
                         }
                         break;
                     case 1:
+                        game = "Persona 3 Portable";
+                        modPath = config.p3pConfig.modDir;
+                        selectedLoadout = config.p3pConfig.loadout;
+                        gamePath = config.p3pConfig.p3pDir;
+                        launcherPath = config.p3pConfig.launcherPath;
+                        buildWarning = config.p3pConfig.buildWarning;
+                        buildFinished = config.p3pConfig.buildFinished;
+                        updateChangelog = config.p3pConfig.updateChangelog;
+                        updateAll = config.p3pConfig.updateAll;
+                        updatesEnabled = config.p3pConfig.updatesEnabled;
+                        deleteOldVersions = config.p3pConfig.deleteOldVersions;
+                        useCpk = true;
+                        ConvertCPK.Visibility = Visibility.Collapsed;
+                        foreach (var button in buttons)
+                        {
+                            button.Foreground = new SolidColorBrush(Color.FromRgb(255, 79, 193));
+                            button.IsHitTestVisible = true;
+                        }
+                        break;
+                    case 2:
                         game = "Persona 4 Golden";
                         modPath = config.p4gConfig.modDir;
                         selectedLoadout = config.p4gConfig.loadout;
@@ -2216,7 +2397,7 @@ namespace AemulusModManager
                             button.IsHitTestVisible = true;
                         }
                         break;
-                    case 2:
+                    case 3:
                         game = "Persona 5";
                         modPath = config.p5Config.modDir;
                         selectedLoadout = config.p5Config.loadout;
@@ -2236,7 +2417,7 @@ namespace AemulusModManager
                             button.IsHitTestVisible = true;
                         }
                         break;
-                    case 3:
+                    case 4:
                         game = "Persona 5 Strikers";
                         if (config.p5sConfig == null)
                             config.p5sConfig = new ConfigP5S();
@@ -3103,6 +3284,9 @@ namespace AemulusModManager
                     case GameFilter.P3:
                         game = "Persona 3 FES";
                         break;
+                    case GameFilter.P3P:
+                        game = "Persona 3 Portable";
+                        break;
                     case GameFilter.P4G:
                         game = "Persona 4 Golden";
                         break;
@@ -3126,6 +3310,9 @@ namespace AemulusModManager
             {
                 case GameFilter.P3:
                     game = "Persona 3 FES";
+                    break;
+                case GameFilter.P3P:
+                    game = "Persona 3 Portable";
                     break;
                 case GameFilter.P4G:
                     game = "Persona 4 Golden";
@@ -3267,7 +3454,7 @@ namespace AemulusModManager
                 LoadingBar.Visibility = Visibility.Visible;
                 ErrorPanel.Visibility = Visibility.Collapsed;
                 // Initialize games
-                var gameIDS = new string[] { "8502", "8263", "7545", "9099" };
+                var gameIDS = new string[] { "8502", "8583", "8263", "7545", "9099" };
                 var types = new string[] { "Mod", "Wip", "Sound", "Tool", "Tutorial" };
                 var gameCounter = 0;
                 foreach (var gameID in gameIDS)
@@ -3444,6 +3631,7 @@ namespace AemulusModManager
             bgs = new List<BitmapImage>();
             var bgUrls = new string[] {
             "pack://application:,,,/AemulusPackageManager;component/Assets/p3f.png",
+            "pack://application:,,,/AemulusPackageManager;component/Assets/p3p.png",
             "pack://application:,,,/AemulusPackageManager;component/Assets/p4g.png",
             "pack://application:,,,/AemulusPackageManager;component/Assets/p5.png",
             "pack://application:,,,/AemulusPackageManager;component/Assets/sophia.png"};
@@ -3673,12 +3861,15 @@ namespace AemulusModManager
                         gameID = "8502";
                         break;
                     case 1:
-                        gameID = "8263";
+                        gameID = "8583";
                         break;
                     case 2:
-                        gameID = "7545";
+                        gameID = "8263";
                         break;
                     case 3:
+                        gameID = "7545";
+                        break;
+                    case 4:
                         gameID = "9099";
                         break;
                 }
@@ -4038,7 +4229,15 @@ namespace AemulusModManager
                     Console.WriteLine($"Invalid package loadout {LoadoutBox.SelectedItem}.xml ({ex.Message})");
                 }
 
-                showHidden.Value = packages.showHiddenPackages;
+                if (showHidden == null)
+                {
+                    showHidden = new Prop<bool>();
+                    showHidden.Value = true;
+
+                    VisibilityButton.DataContext = showHidden;
+                    ShowHiddenText.DataContext = showHidden;
+                }
+                else showHidden.Value = packages.showHiddenPackages;
 
                 var oldDisplayedPackages = DisplayedPackages.ToList();
                 
