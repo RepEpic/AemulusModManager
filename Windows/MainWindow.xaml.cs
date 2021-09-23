@@ -204,7 +204,7 @@ namespace AemulusModManager
                 // Set Aemulus Version
                 aemulusVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
                 var version = aemulusVersion.Substring(0, aemulusVersion.LastIndexOf('.'));
-                Title = $"Aemulus Package Manager";
+                Title = $"Aemulus Package Manager (.NET 5.0 Test Build)";
 
                 infoColor = "#52FF00";
                 warningColor = "#FFFF00";
