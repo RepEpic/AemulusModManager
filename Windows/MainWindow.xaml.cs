@@ -138,7 +138,7 @@ namespace AemulusModManager
             {
                 try
                 {
-                    Process.Start(destination.ToString());
+                    Platform.OpenUrl(destination.ToString());
                 }
                 catch (Exception ex)
                 {
