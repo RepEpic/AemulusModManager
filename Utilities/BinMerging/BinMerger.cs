@@ -175,7 +175,7 @@ namespace AemulusModManager
                         && Path.GetExtension(file).ToLower() != ".tbp" && Path.GetExtension(file).ToLower() != ".rar"
                         && Path.GetExtension(file).ToLower() != ".exe" && Path.GetExtension(file).ToLower() != ".dll"
                         && Path.GetExtension(file).ToLower() != ".flow" && Path.GetExtension(file).ToLower() != ".msg"
-                        && Path.GetExtension(file).ToLower() != ".back"
+                        && Path.GetExtension(file).ToLower() != ".back" && Path.GetExtension(file).ToLower() != ".bp"
                         && Path.GetFileNameWithoutExtension(file).ToLower() != "preview")
                     {
                         List<string> folders = new List<string>(file.Split(char.Parse("\\")));
@@ -576,10 +576,29 @@ namespace AemulusModManager
                                         int prefixLen = commonPrefixUtil(c, binPath);
                                         int otherPrefixLen = commonPrefixUtil(c, $"../../{binPath}");
                                         int otherOtherPrefixLen = commonPrefixUtil(c, $"../{binPath}");
-                                        if (Math.Max(Math.Max(prefixLen, otherPrefixLen), otherOtherPrefixLen) > longestPrefixLen)
+                                        int maxLen = Math.Max(Math.Max(prefixLen, otherPrefixLen), otherOtherPrefixLen);
+                                        if (maxLen > longestPrefixLen)
                                         {
                                             longestPrefix = c;
-                                            longestPrefixLen = Math.Max(Math.Max(prefixLen, otherPrefixLen), otherOtherPrefixLen);
+                                            longestPrefixLen = maxLen;
+                                        }
+                                        else if (maxLen == longestPrefixLen)
+                                        {
+                                            if ((Path.GetExtension(c).Equals(".spd", StringComparison.InvariantCultureIgnoreCase)
+                                                || Path.GetExtension(c).Equals(".bin", StringComparison.InvariantCultureIgnoreCase)
+                                                || Path.GetExtension(c).Equals(".arc", StringComparison.InvariantCultureIgnoreCase)
+                                                || Path.GetExtension(c).Equals(".pac", StringComparison.InvariantCultureIgnoreCase)
+                                                || Path.GetExtension(c).Equals(".pak", StringComparison.InvariantCultureIgnoreCase)
+                                                || Path.GetExtension(c).Equals(".spr", StringComparison.InvariantCultureIgnoreCase))
+                                                && !(Path.GetExtension(longestPrefix).Equals(".spd", StringComparison.InvariantCultureIgnoreCase)
+                                                || Path.GetExtension(longestPrefix).Equals(".bin", StringComparison.InvariantCultureIgnoreCase)
+                                                || Path.GetExtension(longestPrefix).Equals(".arc", StringComparison.InvariantCultureIgnoreCase)
+                                                || Path.GetExtension(longestPrefix).Equals(".pac", StringComparison.InvariantCultureIgnoreCase)
+                                                || Path.GetExtension(longestPrefix).Equals(".pak", StringComparison.InvariantCultureIgnoreCase)
+                                                || Path.GetExtension(longestPrefix).Equals(".spr", StringComparison.InvariantCultureIgnoreCase)))
+                                            {
+                                                longestPrefix = c;
+                                            }
                                         }
                                     }
                                     // Check if we can unpack again
